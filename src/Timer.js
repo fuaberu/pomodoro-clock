@@ -2,21 +2,34 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 
 const Timer = ({ minutes, stopped, change, stateChanger }) => {
-	const [mins, setTime] = useState(minutes);
+	const sessionValue = minutes[0];
+	const breakValue = minutes[1];
 
-	console.log(minutes, mins);
+	const [switchTime, setswitchTime] = useState(false);
+
+	const usingTime = switchTime === true ? breakValue : sessionValue;
+
+	const [mins, setTime] = useState(usingTime);
 
 	useEffect(() => {
-		if (minutes !== mins && stopped === true && change === true) {
+		if (change === true) {
 			setTime(minutes);
 			stateChanger(false);
 		}
-	}, [stateChanger, change, stopped, minutes, mins]);
+	}, [stateChanger, change, minutes, mins]);
 
 	const tick = () => {
 		if (stopped !== true) {
-			setTime(mins - 1000);
+			if (mins > 1000) {
+				setTime(mins - 1000);
+			} else if (mins === 1000) {
+				setTime(mins - 1000);
+				setswitchTime(!switchTime);
+			} else if (mins === 0) {
+				setTime(usingTime);
+			}
 		}
+		console.log(mins, switchTime, usingTime);
 	};
 
 	useEffect(() => {
@@ -29,9 +42,11 @@ const Timer = ({ minutes, stopped, change, stateChanger }) => {
 	const date = new Date(mins);
 
 	return (
-		<p className="clock" id="time-left">{`${date
-			.toTimeString()
-			.replace(/.*(\d{2}:)(\d{2}:\d{2}).*/, '$2')}`}</p>
+		<p className="clock" id="time-left">
+			{60 * 60000 === mins
+				? `60:00`
+				: `${date.toTimeString().replace(/.*(\d{2}:)(\d{2}:\d{2}).*/, '$2')}`}
+		</p>
 	);
 };
 

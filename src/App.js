@@ -5,15 +5,15 @@ import './styles.scss';
 
 function App() {
 	const [breakLength, setBreakLength] = useState(5);
-	const [sessionLength, setSessinLength] = useState(25);
+	const [sessionLength, setSessinLength] = useState(0.1);
 	const [stopped, setStopped] = useState(true);
-	const [changed, setChanged] = useState(false)
+	const [changed, setChanged] = useState(false);
 
 	const handleIncrement = (element) => {
 		if (stopped === true) {
-			if (element === breakLength) {
+			if (element === 'break') {
 				if (breakLength < 60) setBreakLength((prev) => prev + 1);
-			} else {
+			} else if (element === 'session') {
 				if (sessionLength < 60) setSessinLength((prev) => prev + 1);
 			}
 		}
@@ -21,9 +21,9 @@ function App() {
 	};
 	const handleDecrement = (element) => {
 		if (stopped === true) {
-			if (element === breakLength) {
+			if (element === 'break') {
 				if (breakLength > 1) setBreakLength((prev) => prev - 1);
-			} else {
+			} else if (element === 'session') {
 				if (sessionLength > 1) setSessinLength((prev) => prev - 1);
 			}
 		}
@@ -37,9 +37,14 @@ function App() {
 	const handleReset = () => {
 		setStopped(true);
 		setChanged(false);
-		setSessinLength(25)
-		setBreakLength(5)
+		setSessinLength(25);
+		setBreakLength(5);
 	};
+
+	const sessionValue = sessionLength * 60000;
+	const breakValue = breakLength * 60000;
+
+	const minutes = [sessionValue, breakValue];
 
 	return (
 		<section>
@@ -52,7 +57,7 @@ function App() {
 					<div className="break-session flex">
 						<div
 							className="increment btn"
-							onClick={() => handleIncrement(breakLength)}
+							onClick={() => handleIncrement('break')}
 							id="break-increment"
 						>
 							up
@@ -60,7 +65,7 @@ function App() {
 						<div id="break-length">{breakLength}</div>
 						<div
 							className="decrement btn"
-							onClick={() => handleDecrement(breakLength)}
+							onClick={() => handleDecrement('break')}
 							id="break-decrement"
 						>
 							down
@@ -74,7 +79,7 @@ function App() {
 					<div className="break-session flex">
 						<div
 							className="increment btn"
-							onClick={() => handleIncrement(sessionLength)}
+							onClick={() => handleIncrement('session')}
 							id="session-increment"
 						>
 							up
@@ -82,7 +87,7 @@ function App() {
 						<div id="session-length">{sessionLength}</div>
 						<div
 							className="decrement btn"
-							onClick={() => handleDecrement(sessionLength)}
+							onClick={() => handleDecrement('session')}
 							id="session-decrement"
 						>
 							down
@@ -91,7 +96,12 @@ function App() {
 				</div>
 			</div>
 			<h2 id="timer-label">Session</h2>
-			<Timer minutes={sessionLength * 60000} change={changed} stateChanger={setChanged} stopped={stopped} />
+			<Timer
+				minutes={minutes}
+				change={changed}
+				stateChanger={setChanged}
+				stopped={stopped}
+			/>
 			<div className="timer-control">
 				<div id="start_stop" onClick={handleStart} className="btn">
 					start stop
