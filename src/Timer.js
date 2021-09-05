@@ -1,22 +1,38 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-const Timer = ({ minutes, stopped, change, stateChanger }) => {
+const Timer = ({
+	minutes,
+	stopped,
+	change,
+	stateChanger,
+	sessionActive,
+	reset,
+}) => {
 	const sessionValue = minutes[0];
 	const breakValue = minutes[1];
 
-	const [switchTime, setswitchTime] = useState(false);
+	const [switchTime, setSwitchTime] = useState(false);
 
 	const usingTime = switchTime === true ? breakValue : sessionValue;
 
 	const [mins, setTime] = useState(usingTime);
 
 	useEffect(() => {
-		if (change === true) {
-			setTime(minutes);
+		if (reset === true) {
+			setSwitchTime(false);
+		}
+	}, [reset]);
+
+	useEffect(() => {
+		if (change === true && stopped === true && switchTime === true) {
+			setTime(breakValue);
+			stateChanger(false);
+		} else if (change === true && stopped === true && switchTime === false) {
+			setTime(sessionValue);
 			stateChanger(false);
 		}
-	}, [stateChanger, change, minutes, mins]);
+	}, [stateChanger, change, switchTime, breakValue, sessionValue, stopped]);
 
 	const tick = () => {
 		if (stopped !== true) {
@@ -24,9 +40,11 @@ const Timer = ({ minutes, stopped, change, stateChanger }) => {
 				setTime(mins - 1000);
 			} else if (mins === 1000) {
 				setTime(mins - 1000);
-				setswitchTime(!switchTime);
+				setSwitchTime(!switchTime);
+				sessionActive(switchTime);
 			} else if (mins === 0) {
 				setTime(usingTime);
+				playSound();
 			}
 		}
 		console.log(mins, switchTime, usingTime);
@@ -41,12 +59,28 @@ const Timer = ({ minutes, stopped, change, stateChanger }) => {
 
 	const date = new Date(mins);
 
+	const playSound = () => {
+		const audioitem = document.getElementById('beep');
+		if (reset === false) {
+			audioitem.currentTime = 0;
+			audioitem.play();
+		} else {
+			audioitem.pause();
+		}
+	};
+
 	return (
-		<p className="clock" id="time-left">
-			{60 * 60000 === mins
-				? `60:00`
-				: `${date.toTimeString().replace(/.*(\d{2}:)(\d{2}:\d{2}).*/, '$2')}`}
-		</p>
+		<>
+			<p className="clock" id="time-left">
+				{60 * 60000 === mins
+					? `60:00`
+					: `${date.toTimeString().replace(/.*(\d{2}:)(\d{2}:\d{2}).*/, '$2')}`}
+			</p>
+			<audio
+				id="beep"
+				src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
+			></audio>
+		</>
 	);
 };
 

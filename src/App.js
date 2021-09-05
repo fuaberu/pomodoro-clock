@@ -5,9 +5,11 @@ import './styles.scss';
 
 function App() {
 	const [breakLength, setBreakLength] = useState(5);
-	const [sessionLength, setSessinLength] = useState(0.1);
+	const [sessionLength, setSessinLength] = useState(25);
 	const [stopped, setStopped] = useState(true);
 	const [changed, setChanged] = useState(false);
+	const [sessionActive, setSessionActive] = useState(true);
+	const [reset, setReset] = useState(false);
 
 	const handleIncrement = (element) => {
 		if (stopped === true) {
@@ -32,13 +34,16 @@ function App() {
 
 	const handleStart = () => {
 		setStopped(!stopped);
+		setReset(false);
 	};
 
 	const handleReset = () => {
 		setStopped(true);
-		setChanged(false);
+		setChanged(true);
 		setSessinLength(25);
 		setBreakLength(5);
+		setSessionActive(true);
+		setReset(true);
 	};
 
 	const sessionValue = sessionLength * 60000;
@@ -95,12 +100,14 @@ function App() {
 					</div>
 				</div>
 			</div>
-			<h2 id="timer-label">Session</h2>
+			<h2 id="timer-label">{sessionActive === true ? 'Session' : 'Break'}</h2>
 			<Timer
 				minutes={minutes}
 				change={changed}
 				stateChanger={setChanged}
 				stopped={stopped}
+				sessionActive={setSessionActive}
+				reset={reset}
 			/>
 			<div className="timer-control">
 				<div id="start_stop" onClick={handleStart} className="btn">
