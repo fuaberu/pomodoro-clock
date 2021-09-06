@@ -39,9 +39,10 @@ function App() {
 
 	const pauseSound = () => {
 		const audioitem = document.getElementById('beep');
-		console.log('pause');
-		audioitem.pause();
-		audioitem.currentTime = 0;
+		if (audioitem.currentTime !== 0) {
+			audioitem.pause();
+			audioitem.currentTime = 0;
+		}
 	};
 
 	const handleReset = () => {
