@@ -4,8 +4,8 @@ import Timer from './Timer';
 import './styles.scss';
 
 function App() {
-	const [breakLength, setBreakLength] = useState(5);
-	const [sessionLength, setSessinLength] = useState(25);
+	const [breakLength, setBreakLength] = useState(0.05);
+	const [sessionLength, setSessinLength] = useState(0.1);
 	const [stopped, setStopped] = useState(true);
 	const [changed, setChanged] = useState(false);
 	const [sessionActive, setSessionActive] = useState(true);
@@ -37,6 +37,13 @@ function App() {
 		setReset(false);
 	};
 
+	const pauseSound = () => {
+		const audioitem = document.getElementById('beep');
+		console.log('pause');
+		audioitem.pause();
+		audioitem.currentTime = 0;
+	};
+
 	const handleReset = () => {
 		setStopped(true);
 		setChanged(true);
@@ -44,6 +51,7 @@ function App() {
 		setBreakLength(5);
 		setSessionActive(true);
 		setReset(true);
+		pauseSound();
 	};
 
 	const sessionValue = sessionLength * 60000;

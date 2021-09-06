@@ -47,7 +47,6 @@ const Timer = ({
 				playSound();
 			}
 		}
-		console.log(mins, switchTime, usingTime);
 	};
 
 	useEffect(() => {
@@ -61,12 +60,9 @@ const Timer = ({
 
 	const playSound = () => {
 		const audioitem = document.getElementById('beep');
-		if (reset === false) {
-			audioitem.currentTime = 0;
-			audioitem.play();
-		} else {
-			audioitem.pause();
-		}
+		console.log(audioitem);
+		audioitem.currentTime = 0;
+		audioitem.play();
 	};
 
 	return (
